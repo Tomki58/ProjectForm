@@ -1,0 +1,30 @@
+﻿<Window x:Class="BranchPredictionSim.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BranchPredictionSim"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="717.469" Width="1306.543">
+    <Grid>
+        <TextBox x:Name="AsmCode" HorizontalAlignment="Left" Height="625" TextWrapping="Wrap" VerticalAlignment="Top" Width="349" Margin="0,61,0,0" FontSize="24" Text="asm.txt"/>
+        <TextBox x:Name="AsmCodeTitle" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="Assembly code" VerticalAlignment="Top" Width="349" SpellCheck.IsEnabled="True" FontSize="24"/>
+        <Button x:Name="StepButton" Content="Шаг" HorizontalAlignment="Left" Margin="632,61,0,0" VerticalAlignment="Top" Width="184" Height="61" FontSize="24" Click="StepButton_Click" IsEnabled="False"/>
+        <Button x:Name="RunButton" Content="Вычислить" HorizontalAlignment="Left" Margin="349,61,0,0" VerticalAlignment="Top" Width="283" Height="61" FontSize="24" Click="RunButton_Click" IsEnabled="False"/>
+        <ComboBox FontSize="24" x:Name="PredictorType" HorizontalAlignment="Left" Margin="349,0,0,0" VerticalAlignment="Top" Width="283" Height="61" SelectionChanged="PredictorType_SelectionChanged" SelectedIndex="0">
+            <ComboBoxItem FontSize="24" Content="AlwaysPredict"/>
+            <ComboBoxItem FontSize="24" Content="BTFNT"/>
+            <ComboBoxItem FontSize="24" Content="1-bit predictor"/>
+            <ComboBoxItem FontSize="24" Content="2-bit predictor"/>
+            <ComboBoxItem FontSize="24" Content="n-bit predictor"/>
+        </ComboBox>
+        <TextBox x:Name="Params" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="184" Margin="632,0,0,0" FontSize="24" IsEnabled="False"/>
+        <Button x:Name="StartButton" Content="я сказала Стартуем" HorizontalAlignment="Left" Margin="816,0,0,0" VerticalAlignment="Top" Width="483" Height="61" FontSize="24" Click="StartButton_Click"/>
+        <TextBox x:Name="LineNumJump" HorizontalAlignment="Left" Height="61" Margin="1079,61,0,0" TextWrapping="Wrap" Text="-1" VerticalAlignment="Top" Width="220" FontSize="24"/>
+        <TextBlock HorizontalAlignment="Left" Margin="816,61,0,0" TextWrapping="Wrap" Text="Перейти к строке (-1 чтобы продолжить нормальное выполнение)" VerticalAlignment="Top" Height="61" Width="263" FontSize="14" FontStyle="Italic" FontWeight="Bold" TextDecorations="Underline"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="564" Margin="349,122,0,0" VerticalAlignment="Top" Width="950">
+            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" Text="Статистика предсказаний: " Margin="-1,-1,549,405" FontSize="24"/>
+        </Border>
+
+    </Grid>
+</Window>

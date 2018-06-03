@@ -25,16 +25,18 @@ namespace BranchPredictionSim
         public MainWindow()
         {
             InitializeComponent();
+            AsmCode.IsEnabled = false;
         }
 
         private Executor executor;
+        private string filename;
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             //todo clear stats
             RunButton.IsEnabled = true;
             StepButton.IsEnabled = true;
-            var codeLines = File.ReadAllLines(AsmCode.Text);
+            var codeLines = File.ReadAllLines(filename);
             switch (PredictorType.SelectedIndex)
             {
                 case 0:
@@ -99,6 +101,23 @@ namespace BranchPredictionSim
             PredictionStats.Text = "Статистика предсказаний: " 
                 + (successPredictions/(double) predictionsCount) * 100 
                 + "% успешных предсказаний";
+        }
+
+        // Open file
+        private void ChooseFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = "Document";
+            dlg.DefaultExt = ".txt";
+            dlg.Filter = "Text documents (.txt)|*.txt";
+
+            Nullable<bool> result = dlg.ShowDialog(this);
+            if (result == true)
+            {
+                filename = dlg.FileName;
+            }
+
+            AsmCode.Text = filename;
         }
     }
 }

@@ -15,7 +15,6 @@ namespace BranchPredictionSim
         private const string OCTO_DIGIT_HEADER = "q";
         private const string BYTE_DIGIT_HEADER = "b";
         private const string DECIMAL_DIGIT_HEADER = "d";
-        private static string[] JMP_OPS = new string[] { "je", "jne", "jg" };
         //funcname to func map
         private static Dictionary<string, Func<List<string>, Executor, bool>> cmdDict = new Dictionary<string, Func<List<string>, Executor, bool>>() {
             {"add", ASMFunctions.add },
@@ -30,6 +29,17 @@ namespace BranchPredictionSim
         //linenum: [(realExec, predictExec), ...]
         public Dictionary<int, List<KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new Dictionary<int, List<KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
+        public Dictionary<string, Func<Executor, bool>> jumpDict { get; private set; } = new Dictionary<string, Func<Executor, bool>>()
+        {
+            {"je",  ASMFunctions.je},
+            {"jne", ASMFunctions.jne},
+            {"jle", ASMFunctions.jle},
+            {"jg", ASMFunctions.jg},
+            {"jp", ASMFunctions.jp},
+            {"jnp", ASMFunctions.jnp},
+            {"js", ASMFunctions.js},
+            {"jns", ASMFunctions.jns}
+        };
         private IBranchPredictor predictor;
         private int currentLineNum = 0;
 
@@ -37,8 +47,9 @@ namespace BranchPredictionSim
         public float ebx = 0f;
         public float ecx = 0f;
         public float edx = 0f;
-        public float cf = 0f;
         public float zf = 0f;
+        public float sf = 0f;
+        public float pf = 0f;
 
         public Executor(string[] asmCodeStr, IBranchPredictor predictor)
         {
@@ -69,11 +80,13 @@ namespace BranchPredictionSim
                 return ref ecx;
             if (operand.Equals("EDX", StringComparison.CurrentCultureIgnoreCase))
                 return ref edx;
-            if (operand.Equals("CF", StringComparison.CurrentCultureIgnoreCase))
-                return ref cf;
+            if (operand.Equals("SF", StringComparison.CurrentCultureIgnoreCase))
+                return ref sf;
+            if (operand.Equals("PF", StringComparison.CurrentCultureIgnoreCase))
+                return ref pf;
             if (operand.Equals("ZF", StringComparison.CurrentCultureIgnoreCase))
                 return ref zf;
-            throw new FormatException("чекай дауна такого регистра нет " + operand);
+            throw new FormatException("Нет такого регистра " + operand);
         }
 
         private static List<List<string>> ParseAsmCode(string[] asmCodeLines)
@@ -117,15 +130,10 @@ namespace BranchPredictionSim
                 if (!cmdDict[oper](tempList, this))
                     throw new Exception("Команда не сработала");
             }
-            //todo implement jumps
-            else if (JMP_OPS.Contains(oper))
+            else if (jumpDict.ContainsKey(oper))
             {
                 //real execution
-                bool execJump = true;
-                switch (oper)
-                {
-                    //check condition
-                }
+                bool execJump = jumpDict[oper](this);
                 if (execJump)
                 {
                     lineNum = labelDict[cmdAndArgs[1]]; // set i to line num where label is
@@ -153,7 +161,7 @@ namespace BranchPredictionSim
         public void Step()
         {
             if (currentLineNum >= asmCodeLines.Count)
-                throw new Exception("КОда нет");
+                throw new Exception("Кода нет");
             Step(ref currentLineNum);
             currentLineNum++;
         }

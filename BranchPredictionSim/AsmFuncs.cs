@@ -8,7 +8,11 @@ namespace BranchPredictionSim
 {
     class ASMFunctions
     {
-        //add some cmds
+        //todo calls
+        //todo loops
+        //todo linear prediction code 
+        //todo retur statement
+        //todo some cmds
         public static bool mov(List<string> cmd, Executor executor)
         {
             ref float firstOp = ref executor.operandToVar(cmd[0]);
@@ -24,6 +28,11 @@ namespace BranchPredictionSim
             ref float secondOp = ref executor.operandToVar(cmd[1]); 
 
             firstOp = firstOp + secondOp;
+
+            executor.zf = (firstOp) == 0 ? 1 : 0;
+            executor.sf = (firstOp) < 0 ? 1 : 0;
+            executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
+
             return true;
         }
 
@@ -33,6 +42,11 @@ namespace BranchPredictionSim
             ref float secondOp = ref executor.operandToVar(cmd[1]);
 
             firstOp = firstOp - secondOp;
+
+            executor.zf = (firstOp) == 0 ? 1 : 0;
+            executor.sf = (firstOp) < 0 ? 1 : 0;
+            executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
+
             return true;
         }
 
@@ -54,17 +68,61 @@ namespace BranchPredictionSim
             
             return true;
         }
-        //todo
+        
         public static bool cmp(List<string> cmd, Executor executor)
         {
             ref float firstOp = ref executor.operandToVar(cmd[0]);
             ref float secondOp = ref executor.operandToVar(cmd[1]);
-            executor.zf = 0;
-            if (firstOp == secondOp)
-            {
-                executor.zf = 1;
-            }
+
+            executor.zf = (firstOp - secondOp) == 0 ? 1 : 0;
+            executor.sf = (firstOp - secondOp) < 0 ? 1 : 0;
+            executor.pf = (firstOp - secondOp) % 2 == 0 ? 1 : 0;
+
             return true;
         }
+
+        public static bool je(Executor executor)
+        {
+            return executor.zf == 1 ? true : false;
+        }
+
+        public static bool jne(Executor executor)
+        {
+            return executor.zf == 0 ? true : false;
+        }
+
+        public static bool jle(Executor executor)
+        {
+            if (executor.zf == 1 || executor.sf == 1)
+                return true;
+            return false;
+        }
+
+        public static bool jg(Executor executor)
+        {
+            return !jle(executor);
+        }
+
+        public static bool jp(Executor executor)
+        {
+            return executor.pf == 1 ? true : false;
+        }
+
+        public static bool jnp(Executor executor)
+        {
+            return !jp(executor);
+        }
+
+        public static bool js(Executor executor)
+        {
+            return executor.sf == 1 ? true : false;
+        }
+
+        public static bool jns(Executor executor)
+        {
+            return !js(executor);
+        }
+
+
     }
 }

@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="717.469" Width="1306.543">
     <Grid>
-        <TextBox x:Name="AsmCode" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" VerticalAlignment="Top" Width="181" Margin="0,61,0,0"/>
-        <TextBox x:Name="AsmCodeTitle" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="Assembly code" VerticalAlignment="Top" Width="349" SpellCheck.IsEnabled="True" FontSize="24"/>
+        <TextBox x:Name="AsmCodeFile" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" VerticalAlignment="Top" Width="171" Margin="10,61,0,0"/>
+        <TextBlock x:Name="AsmCodeTitle" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="Assembly code" VerticalAlignment="Top" Width="339" FontSize="24" Margin="10,0,0,0"/>
         <Button x:Name="StepButton" Content="Шаг" HorizontalAlignment="Left" Margin="632,61,0,0" VerticalAlignment="Top" Width="184" Height="61" FontSize="24" Click="StepButton_Click" IsEnabled="False"/>
         <Button x:Name="RunButton" Content="Вычислить" HorizontalAlignment="Left" Margin="349,61,0,0" VerticalAlignment="Top" Width="283" Height="61" FontSize="24" Click="RunButton_Click" IsEnabled="False"/>
         <ComboBox FontSize="24" x:Name="PredictorType" HorizontalAlignment="Left" Margin="349,0,0,0" VerticalAlignment="Top" Width="283" Height="61" SelectionChanged="PredictorType_SelectionChanged" SelectedIndex="0">
@@ -19,13 +19,21 @@
             <ComboBoxItem FontSize="24" Content="n-bit predictor"/>
         </ComboBox>
         <TextBox x:Name="Params" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="184" Margin="632,0,0,0" FontSize="24" IsEnabled="False"/>
-        <Button x:Name="StartButton" Content="я сказала Стартуем" HorizontalAlignment="Left" Margin="816,0,0,0" VerticalAlignment="Top" Width="483" Height="61" FontSize="24" Click="StartButton_Click"/>
-        <TextBox x:Name="LineNumJump" HorizontalAlignment="Left" Height="61" Margin="1079,61,0,0" TextWrapping="Wrap" Text="-1" VerticalAlignment="Top" Width="220" FontSize="24"/>
-        <TextBlock HorizontalAlignment="Left" Margin="816,61,0,0" TextWrapping="Wrap" Text="Перейти к строке (-1 чтобы продолжить нормальное выполнение)" VerticalAlignment="Top" Height="61" Width="263" FontSize="14" FontStyle="Italic" FontWeight="Bold" TextDecorations="Underline"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="564" Margin="349,122,0,0" VerticalAlignment="Top" Width="950">
-            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" Text="Статистика предсказаний: " Margin="-1,-1,549,405" FontSize="24"/>
-        </Border>
+        <Button x:Name="StartButton" IsEnabled ="false" Content="Старт" HorizontalAlignment="Left" Margin="816,0,0,0" VerticalAlignment="Top" Width="277" Height="61" FontSize="24" Click="StartButton_Click"/>
+        <TextBox x:Name="LineNumJump" HorizontalAlignment="Left" Height="61" Margin="1093,61,0,0" TextWrapping="Wrap" Text="-1" VerticalAlignment="Top" Width="196" FontSize="24"/>
+        <TextBlock HorizontalAlignment="Left" Margin="816,61,0,0" TextWrapping="Wrap" Text="Перейти к строке (-1 чтобы продолжить нормальное выполнение)" VerticalAlignment="Top" Height="61" Width="277" FontSize="14" FontStyle="Italic" FontWeight="Bold" TextDecorations="Underline"/>
         <Button x:Name="ChooseFile" Content="Открыть" HorizontalAlignment="Left" Margin="181,61,0,0" VerticalAlignment="Top" Width="168" Height="61" FontSize="24" Click="ChooseFile_Click"/>
+        <TextBox x:Name="AsmCode" HorizontalAlignment="Left" Height="564" Margin="10,122,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="339" TextChanged="AsmCode_TextChanged"/>
+        <Button x:Name="StopButton" Content="Стоп" HorizontalAlignment="Left" Margin="1093,0,0,0" VerticalAlignment="Top" Width="196" Height="61" FontSize="24" Click="StopButton_Click"/>
+        <Grid x:Name="ResultsGrid" HorizontalAlignment="Left" Height="564" Margin="349,122,0,0" VerticalAlignment="Top" Width="950">
+            <DataGrid x:Name="LabelTable" HorizontalAlignment="Left" Height="322" VerticalAlignment="Top" Width="196" Margin="744,0,0,0" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название метки" Binding ="{Binding Key}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Адрес метки" Binding="{Binding Value}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,206,520"><Run Text="Статистика предсказаний: "/></TextBlock>
+        </Grid>
 
     </Grid>
 </Window>

@@ -25,7 +25,7 @@ namespace BranchPredictionSim
         public MainWindow()
         {
             InitializeComponent();
-            AsmCode.IsEnabled = false;
+            AsmCodeFile.IsEnabled = false;
         }
 
         private Executor executor;
@@ -33,10 +33,16 @@ namespace BranchPredictionSim
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            //todo clear stats
             RunButton.IsEnabled = true;
             StepButton.IsEnabled = true;
-            var codeLines = File.ReadAllLines(filename);
+            ChooseFile.IsEnabled = false;
+            AsmCode.IsEnabled = false;
+
+            var codeLines = AsmCode.Text.Split(
+                new[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.None
+            );
+
             switch (PredictorType.SelectedIndex)
             {
                 case 0:
@@ -55,15 +61,20 @@ namespace BranchPredictionSim
                     executor = new Executor(codeLines, new NBitPredictor(int.Parse(Params.Text)));
                     break;
                 default:
-                    throw new Exception("Это ваще как кек");
+                    throw new Exception("Error!");
                     break;
             }
+
+            //foreach(var label in executor.labelDict)
+            //{
+                LabelTable.Items.Add(executor.labelDict);
+            //}
         }
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             executor.RunProgram();
-            UpdateResults(executor);
+            UpdateResults();
         }
 
         private void StepButton_Click(object sender, RoutedEventArgs e)
@@ -72,7 +83,7 @@ namespace BranchPredictionSim
                 executor.Step(ref jumpLine);
             else
                 executor.Step();
-            UpdateResults(executor);
+            UpdateResults();
         }
 
         private void PredictorType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -85,8 +96,18 @@ namespace BranchPredictionSim
                 Params.IsEnabled = false;
         }
 
-        private void UpdateResults(Executor executor)
+        private void ClearResults()
         {
+
+        }
+            private void UpdateResults()
+        {
+            if (executor == null)
+            {
+                ClearResults();
+                return;
+            }
+
             int successPredictions = 0;
             int predictionsCount = 0;
             foreach (var linePredictions in executor.predictorStats)
@@ -117,7 +138,30 @@ namespace BranchPredictionSim
                 filename = dlg.FileName;
             }
 
-            AsmCode.Text = filename;
+
+            var codeLines = File.ReadAllLines(filename);
+            AsmCode.Text = String.Join("\n", codeLines);
+            AsmCodeFile.Text = filename;
+
+            
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateResults();
+            AsmCode.IsEnabled = true;
+            RunButton.IsEnabled = false;
+            StepButton.IsEnabled = false;
+            ChooseFile.IsEnabled = true;
+        }
+
+        private void AsmCode_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (AsmCode.Text.Equals(""))
+            {
+                StartButton.IsEnabled = false;
+            }
+            else StartButton.IsEnabled = true;
         }
     }
 }

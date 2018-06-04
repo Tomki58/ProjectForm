@@ -33,7 +33,7 @@ namespace BranchPredictionSim
                 case "btfnt":
                     return new BTFNT();
                 default:
-                    throw new ArgumentException("нет такого предиктора");
+                    throw new ArgumentException("Нет такого предиктора");
             }
         }
     }

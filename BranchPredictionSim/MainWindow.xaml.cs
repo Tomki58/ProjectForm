@@ -26,6 +26,7 @@ namespace BranchPredictionSim
         {
             InitializeComponent();
             AsmCodeFile.IsEnabled = false;
+
         }
 
         private Executor executor;
@@ -33,6 +34,7 @@ namespace BranchPredictionSim
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+
             RunButton.IsEnabled = true;
             StepButton.IsEnabled = true;
             ChooseFile.IsEnabled = false;
@@ -67,7 +69,7 @@ namespace BranchPredictionSim
 
             //foreach(var label in executor.labelDict)
             //{
-                LabelTable.Items.Add(executor.labelDict);
+            LabelTable.ItemsSource = executor.labelDict;
             //}
         }
 
@@ -76,7 +78,7 @@ namespace BranchPredictionSim
             executor.RunProgram();
             UpdateResults();
         }
-
+        // todo: выводить свойство executor.stats в datagrid с апдейтами
         private void StepButton_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(LineNumJump.Text, out int jumpLine) && jumpLine >= 0)

@@ -2,3 +2,4 @@ mov eax 3
 kek:
 add eax eax
 je kek
+cmp eax eax

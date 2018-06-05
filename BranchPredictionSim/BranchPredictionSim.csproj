@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data.cs" />
     <Compile Include="Predictors\AlwaysPredictJump.cs" />
     <Compile Include="Predictors\BTFNT.cs" />
     <Compile Include="Predictors\IBranchPredictor.cs" />

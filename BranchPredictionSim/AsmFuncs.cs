@@ -19,6 +19,8 @@ namespace BranchPredictionSim
             float value = Convert.ToInt32(cmd[1]);
 
             firstOp = value;
+            // upadte stats
+            executor.updateStats(cmd[0], firstOp);
             return true;
         }
 
@@ -28,10 +30,15 @@ namespace BranchPredictionSim
             ref float secondOp = ref executor.operandToVar(cmd[1]); 
 
             firstOp = firstOp + secondOp;
-
+            // update stats
+            executor.updateStats(cmd[0], firstOp);
             executor.zf = (firstOp) == 0 ? 1 : 0;
             executor.sf = (firstOp) < 0 ? 1 : 0;
             executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
+            // upd flags
+            executor.updateStats("zf", executor.zf);
+            executor.updateStats("sf", executor.sf);
+            executor.updateStats("pf", executor.pf);
 
             return true;
         }
@@ -42,10 +49,15 @@ namespace BranchPredictionSim
             ref float secondOp = ref executor.operandToVar(cmd[1]);
 
             firstOp = firstOp - secondOp;
-
+            // upadte stats
+            executor.updateStats(cmd[0], firstOp);
             executor.zf = (firstOp) == 0 ? 1 : 0;
             executor.sf = (firstOp) < 0 ? 1 : 0;
             executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
+            // upd flags
+            executor.updateStats("zf", executor.zf);
+            executor.updateStats("sf", executor.sf);
+            executor.updateStats("pf", executor.pf);
 
             return true;
         }
@@ -56,6 +68,8 @@ namespace BranchPredictionSim
             ref float secondOp = ref executor.operandToVar(cmd[1]);
 
             firstOp = firstOp * secondOp;
+            // upadte stats
+            executor.updateStats(cmd[0], firstOp);
             return true;
         }
 
@@ -65,7 +79,9 @@ namespace BranchPredictionSim
 
             executor.edx = (int)executor.eax % (int)firstOp;
             executor.eax = (int) executor.eax / (int) firstOp;
-            
+            // upadte stats
+            executor.updateStats("edx", executor.edx);
+            executor.updateStats("eax", executor.eax);
             return true;
         }
         
@@ -77,6 +93,11 @@ namespace BranchPredictionSim
             executor.zf = (firstOp - secondOp) == 0 ? 1 : 0;
             executor.sf = (firstOp - secondOp) < 0 ? 1 : 0;
             executor.pf = (firstOp - secondOp) % 2 == 0 ? 1 : 0;
+
+            // upd flags
+            executor.updateStats("zf", executor.zf);
+            executor.updateStats("sf", executor.sf);
+            executor.updateStats("pf", executor.pf);
 
             return true;
         }

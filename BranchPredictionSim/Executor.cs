@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,8 @@ namespace BranchPredictionSim
             {"js", ASMFunctions.js},
             {"jns", ASMFunctions.jns}
         };
+        // Impossible to update info // public ObservableCollection<KeyValuePair<string, float>> Data { get; set; } = new ObservableCollection<KeyValuePair<string, float>>();
+        public List<Data> stats { get; private set; } = new List<Data>();
         private IBranchPredictor predictor;
         private int currentLineNum = 0;
 
@@ -56,6 +59,13 @@ namespace BranchPredictionSim
             asmCodeLines = ParseAsmCode(asmCodeStr);
             this.predictor = predictor;
             InitLabels();
+            stats.Add(new Data("eax", eax));
+            stats.Add(new Data("ebx", ebx));
+            stats.Add(new Data("ecx", ecx));
+            stats.Add(new Data("edx", edx));
+            stats.Add(new Data("zf", zf));
+            stats.Add(new Data("sf", sf));
+            stats.Add(new Data("pf", pf));
         }
 
         private void InitLabels()
@@ -164,6 +174,15 @@ namespace BranchPredictionSim
                 throw new Exception("Кода нет");
             Step(ref currentLineNum);
             currentLineNum++;
+        }
+
+        public void updateStats(string reg, float value)
+        {
+            foreach (var check in stats)
+            {
+                if (reg == check.regFlag)
+                    check.value = value;
+            }
         }
     }
 }

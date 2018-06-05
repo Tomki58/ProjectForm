@@ -33,6 +33,12 @@
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,206,520"><Run Text="Статистика предсказаний: "/></TextBlock>
+            <DataGrid x:Name="RegFlagStats" HorizontalAlignment="Left" Height="242" Margin="744,322,0,0" VerticalAlignment="Top" Width="196">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Регистр/Флаг" Binding ="{Binding regFlag}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Значение" Binding ="{Binding value}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
     </Grid>

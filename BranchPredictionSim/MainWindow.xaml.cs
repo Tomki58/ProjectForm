@@ -24,6 +24,7 @@ namespace BranchPredictionSim
     {
         public MainWindow()
         {
+            this.DataContext = this;
             InitializeComponent();
             AsmCodeFile.IsEnabled = false;
 
@@ -70,6 +71,7 @@ namespace BranchPredictionSim
             //foreach(var label in executor.labelDict)
             //{
             LabelTable.ItemsSource = executor.labelDict;
+            Update_Stats(executor);
             //}
         }
 
@@ -77,6 +79,7 @@ namespace BranchPredictionSim
         {
             executor.RunProgram();
             UpdateResults();
+            Update_Stats(executor);
         }
         // todo: выводить свойство executor.stats в datagrid с апдейтами
         private void StepButton_Click(object sender, RoutedEventArgs e)
@@ -86,6 +89,7 @@ namespace BranchPredictionSim
             else
                 executor.Step();
             UpdateResults();
+            Update_Stats(executor);
         }
 
         private void PredictorType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -164,6 +168,24 @@ namespace BranchPredictionSim
                 StartButton.IsEnabled = false;
             }
             else StartButton.IsEnabled = true;
+        }
+
+        private void Update_Stats(Executor executor)
+        {
+            regEax.Text = executor.stats[0].regFlag;
+            valueEax.Text = executor.stats[0].value.ToString();
+            regEbx.Text = executor.stats[1].regFlag;
+            valueEbx.Text = executor.stats[1].value.ToString();
+            regEcx.Text = executor.stats[2].regFlag;
+            valueEcx.Text = executor.stats[2].value.ToString();
+            regEdx.Text = executor.stats[3].regFlag;
+            valueEdx.Text = executor.stats[3].value.ToString();
+            ZF.Text = executor.stats[4].regFlag;
+            valueZF.Text = executor.stats[4].value.ToString();
+            SF.Text = executor.stats[5].regFlag;
+            valueSF.Text = executor.stats[5].value.ToString();
+            PF.Text = executor.stats[6].regFlag;
+            valuePF.Text = executor.stats[6].value.ToString();
         }
     }
 }

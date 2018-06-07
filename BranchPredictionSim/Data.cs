@@ -13,7 +13,7 @@ namespace BranchPredictionSim
             this.regFlag = regFlag;
             this.value = value;
         }
-        public string regFlag;
-        public float value;
+        public string regFlag { get; set; }
+        public float value { get; set; }
     }
 }

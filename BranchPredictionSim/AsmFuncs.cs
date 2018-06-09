@@ -8,11 +8,33 @@ namespace BranchPredictionSim
 {
     class ASMFunctions
     {
+        //funcname to func map
+        internal static Dictionary<string, Func<List<string>, Executor, bool>> cmdDict = new Dictionary<string, Func<List<string>, Executor, bool>>() {
+            {"add", ASMFunctions.add },
+            {"sub", ASMFunctions.sub },
+            {"mul", ASMFunctions.mul },
+            {"div", ASMFunctions.div },
+            {"mov", ASMFunctions.mov },
+            {"cmp", ASMFunctions.cmp },
+        };
+
+        internal static Dictionary<string, Func<Executor, bool>> jumpDict { get; private set; } = new Dictionary<string, Func<Executor, bool>>()
+        {
+            {"je",  ASMFunctions.je},
+            {"jne", ASMFunctions.jne},
+            {"jle", ASMFunctions.jle},
+            {"jg", ASMFunctions.jg},
+            {"jp", ASMFunctions.jp},
+            {"jnp", ASMFunctions.jnp},
+            {"js", ASMFunctions.js},
+            {"jns", ASMFunctions.jns}
+        };
+
         //todo calls
         //todo loops
-        //todo linear prediction code 
         //todo retur statement
         //todo some cmds
+        //todo code finished catch exception
         public static bool mov(List<string> cmd, Executor executor)
         {
             ref float firstOp = ref executor.operandToVar(cmd[0]);

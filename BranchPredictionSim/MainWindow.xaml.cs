@@ -32,19 +32,32 @@ namespace BranchPredictionSim
 
         private Executor executor;
         private string filename;
+        private int lastHighlighted = -1;
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-
+            StopButton.IsEnabled = true;
             RunButton.IsEnabled = true;
             StepButton.IsEnabled = true;
             ChooseFile.IsEnabled = false;
             AsmCode.IsEnabled = false;
+            StartButton.IsEnabled = false;
+            PredictorType.IsEnabled = false;
+            FakeAsm.Visibility = Visibility.Visible;
+            AsmCode.Visibility = Visibility.Hidden;
+            lastHighlighted = -1;
 
             var codeLines = AsmCode.Text.Split(
                 new[] { "\r\n", "\r", "\n" },
                 StringSplitOptions.None
             );
+
+            //complete fakeasm
+            FakeAsm.Inlines.Clear();
+            foreach (var codeLine in codeLines)
+            {
+                FakeAsm.Inlines.Add(codeLine + Environment.NewLine);
+            }
 
             switch (PredictorType.SelectedIndex)
             {
@@ -71,7 +84,8 @@ namespace BranchPredictionSim
             //foreach(var label in executor.labelDict)
             //{
             LabelTable.ItemsSource = executor.labelDict;
-            Update_Stats(executor);
+            //Update_Stats(executor);
+            UpdateResults();
             //}
         }
 
@@ -79,17 +93,28 @@ namespace BranchPredictionSim
         {
             executor.RunProgram();
             UpdateResults();
-            Update_Stats(executor);
+            //Update_Stats(executor);
         }
         // todo: выводить свойство executor.stats в datagrid с апдейтами
         private void StepButton_Click(object sender, RoutedEventArgs e)
         {
+            if (lastHighlighted >= 0)
+                FakeAsm.Inlines.ElementAt(lastHighlighted).Background = new SolidColorBrush(Color.FromArgb(0 ,128, 128, 64));
             if (int.TryParse(LineNumJump.Text, out int jumpLine) && jumpLine >= 0)
+            {
+                FakeAsm.Inlines.ElementAt(jumpLine).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
+                lastHighlighted = jumpLine;
                 executor.Step(ref jumpLine);
+            }
             else
+            {
+                FakeAsm.Inlines.ElementAt(executor.currentLineNum).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
+                lastHighlighted = executor.currentLineNum;
                 executor.Step();
+            }
             UpdateResults();
-            Update_Stats(executor);
+
+
         }
 
         private void PredictorType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -106,14 +131,19 @@ namespace BranchPredictionSim
         {
 
         }
-            private void UpdateResults()
+        private void UpdateResults()
         {
             if (executor == null)
             {
                 ClearResults();
                 return;
             }
+            //registers
+            //Update_Stats(executor);
+            RegistersFlags.ItemsSource = executor.stats;
+            RegistersFlags.Items.Refresh();
 
+            //prediction stats
             int successPredictions = 0;
             int predictionsCount = 0;
             foreach (var linePredictions in executor.predictorStats)
@@ -128,6 +158,9 @@ namespace BranchPredictionSim
             PredictionStats.Text = "Статистика предсказаний: " 
                 + (successPredictions/(double) predictionsCount) * 100 
                 + "% успешных предсказаний";
+
+            //nextCommandAddr
+            NextCmdAddr.Text = string.Format("Адрес следующей команды: {0:X} = {1:X} + {2:X}", executor.CommandLength + executor.CurrentAddr, executor.CurrentAddr, executor.CommandLength);
         }
 
         // Open file
@@ -154,11 +187,17 @@ namespace BranchPredictionSim
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            executor = null;
             UpdateResults();
             AsmCode.IsEnabled = true;
+            PredictorType.IsEnabled = true;
             RunButton.IsEnabled = false;
             StepButton.IsEnabled = false;
             ChooseFile.IsEnabled = true;
+            StopButton.IsEnabled = false;
+            StartButton.IsEnabled = true;
+            FakeAsm.Visibility = Visibility.Hidden;
+            AsmCode.Visibility = Visibility.Visible;
         }
 
         private void AsmCode_TextChanged(object sender, TextChangedEventArgs e)
@@ -170,22 +209,22 @@ namespace BranchPredictionSim
             else StartButton.IsEnabled = true;
         }
 
-        private void Update_Stats(Executor executor)
-        {
-            regEax.Text = executor.stats[0].regFlag;
-            valueEax.Text = executor.stats[0].value.ToString();
-            regEbx.Text = executor.stats[1].regFlag;
-            valueEbx.Text = executor.stats[1].value.ToString();
-            regEcx.Text = executor.stats[2].regFlag;
-            valueEcx.Text = executor.stats[2].value.ToString();
-            regEdx.Text = executor.stats[3].regFlag;
-            valueEdx.Text = executor.stats[3].value.ToString();
-            ZF.Text = executor.stats[4].regFlag;
-            valueZF.Text = executor.stats[4].value.ToString();
-            SF.Text = executor.stats[5].regFlag;
-            valueSF.Text = executor.stats[5].value.ToString();
-            PF.Text = executor.stats[6].regFlag;
-            valuePF.Text = executor.stats[6].value.ToString();
-        }
+        //private void Update_Stats(Executor executor)
+        //{
+        //    regEax.Text = executor.stats[0].regFlag;
+        //    valueEax.Text = executor.stats[0].value.ToString();
+        //    regEbx.Text = executor.stats[1].regFlag;
+        //    valueEbx.Text = executor.stats[1].value.ToString();
+        //    regEcx.Text = executor.stats[2].regFlag;
+        //    valueEcx.Text = executor.stats[2].value.ToString();
+        //    regEdx.Text = executor.stats[3].regFlag;
+        //    valueEdx.Text = executor.stats[3].value.ToString();
+        //    ZF.Text = executor.stats[4].regFlag;
+        //    valueZF.Text = executor.stats[4].value.ToString();
+        //    SF.Text = executor.stats[5].regFlag;
+        //    valueSF.Text = executor.stats[5].value.ToString();
+        //    PF.Text = executor.stats[6].regFlag;
+        //    valuePF.Text = executor.stats[6].value.ToString();
+        //}
     }
 }

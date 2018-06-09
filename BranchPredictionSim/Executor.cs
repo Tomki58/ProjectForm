@@ -16,35 +16,18 @@ namespace BranchPredictionSim
         private const string OCTO_DIGIT_HEADER = "q";
         private const string BYTE_DIGIT_HEADER = "b";
         private const string DECIMAL_DIGIT_HEADER = "d";
-        //funcname to func map
-        private static Dictionary<string, Func<List<string>, Executor, bool>> cmdDict = new Dictionary<string, Func<List<string>, Executor, bool>>() {
-            {"add", ASMFunctions.add },
-            {"sub", ASMFunctions.sub },
-            {"mul", ASMFunctions.mul },
-            {"div", ASMFunctions.div },
-            {"mov", ASMFunctions.mov },
-            {"cmp", ASMFunctions.cmp },
-        };
+
 
         private List<List<string>> asmCodeLines;
         //linenum: [(realExec, predictExec), ...]
         public Dictionary<int, List<KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new Dictionary<int, List<KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
-        public Dictionary<string, Func<Executor, bool>> jumpDict { get; private set; } = new Dictionary<string, Func<Executor, bool>>()
-        {
-            {"je",  ASMFunctions.je},
-            {"jne", ASMFunctions.jne},
-            {"jle", ASMFunctions.jle},
-            {"jg", ASMFunctions.jg},
-            {"jp", ASMFunctions.jp},
-            {"jnp", ASMFunctions.jnp},
-            {"js", ASMFunctions.js},
-            {"jns", ASMFunctions.jns}
-        };
         // Impossible to update info // public ObservableCollection<KeyValuePair<string, float>> Data { get; set; } = new ObservableCollection<KeyValuePair<string, float>>();
-        public List<Data> stats { get; private set; } = new List<Data>();
+        public ObservableCollection<Data> stats { get; private set; } = new ObservableCollection<Data>();
         private IBranchPredictor predictor;
-        private int currentLineNum = 0;
+        public int currentLineNum = 0;
+        public int CurrentAddr { get; private set; } = 0;
+        public int CommandLength { get; private set; } = 0;
 
         public float eax = 0f;
         public float ebx = 0f;
@@ -133,17 +116,17 @@ namespace BranchPredictionSim
             Console.Write("\n" + String.Join(" ", cmdAndArgs));
 
             //check for normal operation
-            if (cmdDict.ContainsKey(oper))
+            if (ASMFunctions.cmdDict.ContainsKey(oper))
             {
                 var tempList = new List<string>(cmdAndArgs); // leave only operands
                 tempList.RemoveAt(0);
-                if (!cmdDict[oper](tempList, this))
+                if (!ASMFunctions.cmdDict[oper](tempList, this))
                     throw new Exception("Команда не сработала");
             }
-            else if (jumpDict.ContainsKey(oper))
+            else if (ASMFunctions.jumpDict.ContainsKey(oper))
             {
                 //real execution
-                bool execJump = jumpDict[oper](this);
+                bool execJump = ASMFunctions.jumpDict[oper](this);
                 if (execJump)
                 {
                     lineNum = labelDict[cmdAndArgs[1]]; // set i to line num where label is
@@ -173,6 +156,8 @@ namespace BranchPredictionSim
             if (currentLineNum >= asmCodeLines.Count)
                 throw new Exception("Кода нет");
             Step(ref currentLineNum);
+            CurrentAddr += CommandLength;
+            CommandLength = asmCodeLines[currentLineNum].Aggregate((accum, next) => accum + next).Length;
             currentLineNum++;
         }
 

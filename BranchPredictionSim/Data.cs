@@ -14,6 +14,6 @@ namespace BranchPredictionSim
             this.value = value;
         }
         public string regFlag { get; set; }
-        public float value { get; set; }
+        public float value;
     }
 }

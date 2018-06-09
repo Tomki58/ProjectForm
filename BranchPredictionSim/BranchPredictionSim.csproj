@@ -59,7 +59,6 @@
     <Compile Include="Predictors\BTFNT.cs" />
     <Compile Include="Predictors\IBranchPredictor.cs" />
     <Compile Include="Predictors\NBitPredictor.cs" />
-    <Compile Include="Start.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

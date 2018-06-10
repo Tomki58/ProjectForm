@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BranchPredictionSim.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,14 +17,16 @@ namespace BranchPredictionSim
         private const string OCTO_DIGIT_HEADER = "q";
         private const string BYTE_DIGIT_HEADER = "b";
         private const string DECIMAL_DIGIT_HEADER = "d";
-
+        private const string RETURN_CMD = "RET";
+        private const string CALL_CMD = "call";
 
         private List<List<string>> asmCodeLines;
         //linenum: [(realExec, predictExec), ...]
         public Dictionary<int, List<KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new Dictionary<int, List<KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
         // Impossible to update info // public ObservableCollection<KeyValuePair<string, float>> Data { get; set; } = new ObservableCollection<KeyValuePair<string, float>>();
-        public ObservableCollection<Data> stats { get; private set; } = new ObservableCollection<Data>();
+        public List<Data> stats { get; private set; } = new List<Data>();
+        public Stack<int> EIP = new Stack<int>();
         private IBranchPredictor predictor;
         public int currentLineNum = 0;
         public int CurrentAddr { get; private set; } = 0;
@@ -145,16 +148,24 @@ namespace BranchPredictionSim
             else if (labelDict.ContainsKey(oper.Substring(0, oper.Length - 1)))
             {
                 return;
+            } else if (oper.Equals(RETURN_CMD, StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (EIP.Count == 0)
+                    throw new EndOfCodeException("Управление передано ОС");
+                lineNum = EIP.Pop();
+            } else if (oper.Equals(CALL_CMD, StringComparison.CurrentCultureIgnoreCase))
+            {
+                EIP.Push(lineNum);
+                lineNum = labelDict[cmdAndArgs[1]];
             }
             else
                 throw new Exception("No such command " + cmdAndArgs[0]);
-            //lineNum++;
         }
 
         public void Step()
         {
             if (currentLineNum >= asmCodeLines.Count)
-                throw new Exception("Кода нет");
+                throw new EndOfCodeException("Конец кода, управление передано ОС");
             Step(ref currentLineNum);
             CurrentAddr += CommandLength;
             CommandLength = asmCodeLines[currentLineNum].Aggregate((accum, next) => accum + next).Length;

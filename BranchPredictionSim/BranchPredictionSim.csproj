@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Data.cs" />
+    <Compile Include="Exceptions\EndOfCodeException.cs" />
     <Compile Include="Predictors\AlwaysPredictJump.cs" />
     <Compile Include="Predictors\BTFNT.cs" />
     <Compile Include="Predictors\IBranchPredictor.cs" />

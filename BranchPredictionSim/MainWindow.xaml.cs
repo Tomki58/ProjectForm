@@ -139,7 +139,7 @@ namespace BranchPredictionSim
                 return;
             }
             //registers
-            //Update_Stats(executor);
+            Update_Stats(executor);
             RegistersFlags.ItemsSource = executor.stats;
             RegistersFlags.Items.Refresh();
 
@@ -209,22 +209,22 @@ namespace BranchPredictionSim
             else StartButton.IsEnabled = true;
         }
 
-        //private void Update_Stats(Executor executor)
-        //{
-        //    regEax.Text = executor.stats[0].regFlag;
-        //    valueEax.Text = executor.stats[0].value.ToString();
-        //    regEbx.Text = executor.stats[1].regFlag;
-        //    valueEbx.Text = executor.stats[1].value.ToString();
-        //    regEcx.Text = executor.stats[2].regFlag;
-        //    valueEcx.Text = executor.stats[2].value.ToString();
-        //    regEdx.Text = executor.stats[3].regFlag;
-        //    valueEdx.Text = executor.stats[3].value.ToString();
-        //    ZF.Text = executor.stats[4].regFlag;
-        //    valueZF.Text = executor.stats[4].value.ToString();
-        //    SF.Text = executor.stats[5].regFlag;
-        //    valueSF.Text = executor.stats[5].value.ToString();
-        //    PF.Text = executor.stats[6].regFlag;
-        //    valuePF.Text = executor.stats[6].value.ToString();
-        //}
+        private void Update_Stats(Executor executor)
+        {
+            regEax.Text = executor.stats[0].regFlag;
+            valueEax.Text = executor.stats[0].value.ToString();
+            regEbx.Text = executor.stats[1].regFlag;
+            valueEbx.Text = executor.stats[1].value.ToString();
+            regEcx.Text = executor.stats[2].regFlag;
+            valueEcx.Text = executor.stats[2].value.ToString();
+            regEdx.Text = executor.stats[3].regFlag;
+            valueEdx.Text = executor.stats[3].value.ToString();
+            ZF.Text = executor.stats[4].regFlag;
+            valueZF.Text = executor.stats[4].value.ToString();
+            SF.Text = executor.stats[5].regFlag;
+            valueSF.Text = executor.stats[5].value.ToString();
+            PF.Text = executor.stats[6].regFlag;
+            valuePF.Text = executor.stats[6].value.ToString();
+        }
     }
 }

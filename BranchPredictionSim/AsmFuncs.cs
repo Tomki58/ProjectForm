@@ -27,12 +27,14 @@ namespace BranchPredictionSim
             {"jp", ASMFunctions.jp},
             {"jnp", ASMFunctions.jnp},
             {"js", ASMFunctions.js},
-            {"jns", ASMFunctions.jns}
+            {"jns", ASMFunctions.jns},
+            {"jmp", ASMFunctions.jmp}
         };
 
-        //todo calls
+        //todo write EIP values
+        //fix next addr increment
+        //todo fix datagrid lowpriority
         //todo loops
-        //todo retur statement
         //todo some cmds
         //todo code finished catch exception
         public static bool mov(List<string> cmd, Executor executor)
@@ -124,6 +126,12 @@ namespace BranchPredictionSim
             return true;
         }
 
+        public static bool ret(Executor executor)
+        {
+            return executor.zf == 1 ? true : false;
+        }
+
+        //jump stuff
         public static bool je(Executor executor)
         {
             return executor.zf == 1 ? true : false;
@@ -166,6 +174,9 @@ namespace BranchPredictionSim
             return !js(executor);
         }
 
-
+        public static bool jmp(Executor executor)
+        {
+            return true;
+        }
     }
 }

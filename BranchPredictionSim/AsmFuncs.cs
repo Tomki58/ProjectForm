@@ -17,6 +17,8 @@ namespace BranchPredictionSim
             {"div", ASMFunctions.div },
             {"mov", ASMFunctions.mov },
             {"cmp", ASMFunctions.cmp },
+            {"pop", ASMFunctions.pop },
+            {"push", ASMFunctions.push },
         };
 
         internal static Dictionary<string, Func<Executor, bool>> jumpDict { get; private set; } = new Dictionary<string, Func<Executor, bool>>()
@@ -29,15 +31,30 @@ namespace BranchPredictionSim
             {"jnp", ASMFunctions.jnp},
             {"js", ASMFunctions.js},
             {"jns", ASMFunctions.jns},
-            {"jmp", ASMFunctions.jmp}
+            {"jmp", ASMFunctions.jmp},
+            {"loop", ASMFunctions.loop},
         };
         private const string FIRST_OP_IMM = "Первый операнд не может быть числом";
-        //todo write EIP values
         //fix next addr increment
-        //todo loops
         //todo some cmds
         //todo add more predictors
-        //todo pass params to procedures
+
+        public static bool push(List<string> cmd, Executor executor)
+        {
+            var firstOp = executor.ParseOperand(cmd[0]);
+            executor.stack.Push(firstOp.Value);
+            return true;
+        }
+
+        public static bool pop(List<string> cmd, Executor executor)
+        {
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            firstOp.Value = executor.stack.Pop();
+            return true;
+        }
+
         public static bool mov(List<string> cmd, Executor executor)
         {
             var firstOp = executor.ParseOperand(cmd[0]);
@@ -163,6 +180,14 @@ namespace BranchPredictionSim
 
         public static bool jmp(Executor executor)
         {
+            return true;
+        }
+
+        public static bool loop(Executor executor)
+        {
+            if (executor.ecx.Value == 0)
+                return false;
+            executor.ecx.Value--;
             return true;
         }
     }

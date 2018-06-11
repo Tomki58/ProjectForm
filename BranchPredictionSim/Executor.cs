@@ -12,6 +12,7 @@ namespace BranchPredictionSim
 
     class Executor
     {
+        //consts
         private const string COMMENT_SYMB = ";";
         private const string LABEL_SYMB = ":";
         private const string HEX_DIGIT_HEADER = "h";
@@ -39,6 +40,7 @@ namespace BranchPredictionSim
         public FlagReg zf = new FlagReg(false);
         public FlagReg sf = new FlagReg(false);
         public FlagReg pf = new FlagReg(false);
+        public Stack<int> stack = new Stack<int>();
 
         public Executor(string[] asmCodeStr, IBranchPredictor predictor)
         {

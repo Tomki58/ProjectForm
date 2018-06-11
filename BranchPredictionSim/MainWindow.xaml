@@ -31,7 +31,7 @@
                     <DataGridTextColumn Header="Адрес метки" Binding="{Binding Value}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,206,520" Text="Статистика предсказаний: "/>
+            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,291,520" Text="Статистика предсказаний: "/>
             <DataGrid Visibility="Visible" x:Name="RegistersFlags" HorizontalAlignment="Left" Height="113" Margin="744,322,0,0" VerticalAlignment="Top" Width="196" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Регистр" Binding ="{Binding Key}"></DataGridTextColumn>
@@ -44,7 +44,17 @@
                     <DataGridTextColumn Header="Значение" Binding="{Binding Value.Flag}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock x:Name="NextCmdAddr" HorizontalAlignment="Left" Margin="0,49,0,0" TextWrapping="Wrap" Text="Адрес следующей команды:" VerticalAlignment="Top" Height="35" Width="739" FontSize="24"/>
+            <TextBlock x:Name="NextCmdAddr" HorizontalAlignment="Left" Margin="0,49,0,0" TextWrapping="Wrap" Text="Адрес следующей команды:" VerticalAlignment="Top" Height="35" Width="664" FontSize="24"/>
+            <DataGrid x:Name="StackValues" HorizontalAlignment="Left" Height="282" Margin="638,0,0,0" VerticalAlignment="Top" Width="106">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Стек" Binding="{Binding}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid x:Name="EIPValues" HorizontalAlignment="Left" Height="272" Margin="638,282,0,0" VerticalAlignment="Top" Width="106">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="EIP" Binding="{Binding}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
         <TextBlock x:Name="FakeAsm" HorizontalAlignment="Left" Margin="10,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="625" Width="339" Visibility="Hidden"/>

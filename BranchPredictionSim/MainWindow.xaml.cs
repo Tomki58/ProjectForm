@@ -100,6 +100,11 @@ namespace BranchPredictionSim
                 MessageBoxResult result = MessageBox.Show("Достигнут конец кода",
                           "Конец кода",
                           MessageBoxButton.OK);
+            } catch (FormatException ex)
+            {
+                MessageBoxResult result = MessageBox.Show(ex.ToString() + "\nСтрока " + executor.currentLineNum,
+                          "Ошибка параметра",
+                          MessageBoxButton.OK);
             }
             UpdateResults();
             //Update_Stats(executor);
@@ -120,6 +125,12 @@ namespace BranchPredictionSim
                 MessageBoxResult result = MessageBox.Show("Достигнут конец кода",
                                           "Конец кода",
                                           MessageBoxButton.OK);
+            }
+            catch (FormatException ex)
+            {
+                MessageBoxResult result = MessageBox.Show(ex.Message + "\nСтрока " + executor.currentLineNum,
+                          "Ошибка параметра",
+                          MessageBoxButton.OK);
             }
             UpdateResults();
 
@@ -155,6 +166,14 @@ namespace BranchPredictionSim
             //flags
             Flags.ItemsSource = executor.flagDict;
             Flags.Items.Refresh();
+
+            //stack
+            StackValues.ItemsSource = executor.stack.ToList();
+            StackValues.Items.Refresh();
+
+            //eip
+            EIPValues.ItemsSource = executor.EIP.ToList();
+            EIPValues.Items.Refresh();
 
             //prediction stats
             int successPredictions = 0;

@@ -1,0 +1,7 @@
+mov eax 1
+mov ebx 0
+fib:
+mov ecx eax
+add eax ebx
+mov ebx ecx
+jmp fib

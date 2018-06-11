@@ -1,0 +1,13 @@
+mov eax 3 
+mov ebx 1 
+mov ecx 0 
+mov edx 30 
+loop: 
+call Increment 
+add ecx ebx 
+cmp ecx edx 
+jne loop 
+ret 
+Increment: 
+add eax ebx 
+ret

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BranchPredictionSim.Exceptions;
 using BranchPredictionSim.Predictors;
 
 namespace BranchPredictionSim
@@ -91,7 +92,13 @@ namespace BranchPredictionSim
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            executor.RunProgram();
+            try
+            {
+                executor.RunProgram();
+            } catch (EndOfCodeException)
+            {
+
+            }
             UpdateResults();
             //Update_Stats(executor);
         }
@@ -100,17 +107,24 @@ namespace BranchPredictionSim
         {
             if (lastHighlighted >= 0)
                 FakeAsm.Inlines.ElementAt(lastHighlighted).Background = new SolidColorBrush(Color.FromArgb(0 ,128, 128, 64));
-            if (int.TryParse(LineNumJump.Text, out int jumpLine) && jumpLine >= 0)
+            try
             {
-                FakeAsm.Inlines.ElementAt(jumpLine).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                lastHighlighted = jumpLine;
-                executor.Step(ref jumpLine);
+                if (int.TryParse(LineNumJump.Text, out int jumpLine) && jumpLine >= 0)
+                {
+                    FakeAsm.Inlines.ElementAt(jumpLine).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
+                    lastHighlighted = jumpLine;
+                    executor.Step(ref jumpLine);
+                }
+                else
+                {
+                    FakeAsm.Inlines.ElementAt(executor.currentLineNum).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
+                    lastHighlighted = executor.currentLineNum;
+                    executor.Step();
+                }
             }
-            else
+            catch (EndOfCodeException)
             {
-                FakeAsm.Inlines.ElementAt(executor.currentLineNum).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                lastHighlighted = executor.currentLineNum;
-                executor.Step();
+
             }
             UpdateResults();
 

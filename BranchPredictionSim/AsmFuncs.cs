@@ -37,12 +37,21 @@ namespace BranchPredictionSim
         //todo loops
         //todo some cmds
         //todo code finished catch exception
+        //todo wrap registers/numbers in class
         public static bool mov(List<string> cmd, Executor executor)
         {
             ref float firstOp = ref executor.operandToVar(cmd[0]);
-            float value = Convert.ToInt32(cmd[1]);
+            float secondOp;
+            try
+            {
+                secondOp = executor.operandToVar(cmd[1]);
+            } catch (FormatException)
+            {
+                secondOp = int.Parse(cmd[1]);
+            }
+            //float value = Convert.ToInt32(cmd[1]);
 
-            firstOp = value;
+            firstOp = secondOp;
             // upadte stats
             executor.updateStats(cmd[0], firstOp);
             return true;

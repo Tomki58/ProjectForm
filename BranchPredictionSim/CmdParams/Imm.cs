@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace BranchPredictionSim.CmdParams
 {
-    class Imm
+    class Imm : CmdParam<int>
     {
+        public override int Value { get; set; }
+        public Imm(int data)
+        {
+            Value = data;
+        }
     }
 }

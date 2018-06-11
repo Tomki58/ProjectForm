@@ -94,10 +94,12 @@ namespace BranchPredictionSim
         {
             try
             {
-                executor.RunProgram();
+                executor.RunProgram(int.Parse(MaxIter.Text));
             } catch (EndOfCodeException)
             {
-
+                MessageBoxResult result = MessageBox.Show("Достигнут конец кода",
+                          "Конец кода",
+                          MessageBoxButton.OK);
             }
             UpdateResults();
             //Update_Stats(executor);
@@ -109,22 +111,15 @@ namespace BranchPredictionSim
                 FakeAsm.Inlines.ElementAt(lastHighlighted).Background = new SolidColorBrush(Color.FromArgb(0 ,128, 128, 64));
             try
             {
-                if (int.TryParse(LineNumJump.Text, out int jumpLine) && jumpLine >= 0)
-                {
-                    FakeAsm.Inlines.ElementAt(jumpLine).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                    lastHighlighted = jumpLine;
-                    executor.Step(ref jumpLine);
-                }
-                else
-                {
-                    FakeAsm.Inlines.ElementAt(executor.currentLineNum).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-                    lastHighlighted = executor.currentLineNum;
-                    executor.Step();
-                }
+                FakeAsm.Inlines.ElementAt(executor.currentLineNum).Background = new SolidColorBrush(Color.FromRgb(255, 0, 255));
+                lastHighlighted = executor.currentLineNum;
+                executor.Step();
             }
             catch (EndOfCodeException)
             {
-
+                MessageBoxResult result = MessageBox.Show("Достигнут конец кода",
+                                          "Конец кода",
+                                          MessageBoxButton.OK);
             }
             UpdateResults();
 
@@ -145,6 +140,7 @@ namespace BranchPredictionSim
         {
 
         }
+
         private void UpdateResults()
         {
             if (executor == null)
@@ -153,9 +149,12 @@ namespace BranchPredictionSim
                 return;
             }
             //registers
-            Update_Stats(executor);
-            RegistersFlags.ItemsSource = executor.stats;
+            RegistersFlags.ItemsSource = executor.regDict;
             RegistersFlags.Items.Refresh();
+
+            //flags
+            Flags.ItemsSource = executor.flagDict;
+            Flags.Items.Refresh();
 
             //prediction stats
             int successPredictions = 0;
@@ -194,9 +193,7 @@ namespace BranchPredictionSim
 
             var codeLines = File.ReadAllLines(filename);
             AsmCode.Text = String.Join("\n", codeLines);
-            AsmCodeFile.Text = filename;
-
-            
+            AsmCodeFile.Text = filename; 
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -221,24 +218,6 @@ namespace BranchPredictionSim
                 StartButton.IsEnabled = false;
             }
             else StartButton.IsEnabled = true;
-        }
-
-        private void Update_Stats(Executor executor)
-        {
-            regEax.Text = executor.stats[0].regFlag;
-            valueEax.Text = executor.stats[0].value.ToString();
-            regEbx.Text = executor.stats[1].regFlag;
-            valueEbx.Text = executor.stats[1].value.ToString();
-            regEcx.Text = executor.stats[2].regFlag;
-            valueEcx.Text = executor.stats[2].value.ToString();
-            regEdx.Text = executor.stats[3].regFlag;
-            valueEdx.Text = executor.stats[3].value.ToString();
-            ZF.Text = executor.stats[4].regFlag;
-            valueZF.Text = executor.stats[4].value.ToString();
-            SF.Text = executor.stats[5].regFlag;
-            valueSF.Text = executor.stats[5].value.ToString();
-            PF.Text = executor.stats[6].regFlag;
-            valuePF.Text = executor.stats[6].value.ToString();
         }
     }
 }

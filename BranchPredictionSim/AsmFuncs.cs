@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BranchPredictionSim.CmdParams;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,132 +31,109 @@ namespace BranchPredictionSim
             {"jns", ASMFunctions.jns},
             {"jmp", ASMFunctions.jmp}
         };
-
+        private const string FIRST_OP_IMM = "Первый операнд не может быть числом";
         //todo write EIP values
         //fix next addr increment
-        //todo fix datagrid lowpriority
         //todo loops
         //todo some cmds
-        //todo code finished catch exception
-        //todo wrap registers/numbers in class
+        //todo add more predictors
+        //todo pass params to procedures
         public static bool mov(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
-            float secondOp;
-            try
-            {
-                secondOp = executor.operandToVar(cmd[1]);
-            } catch (FormatException)
-            {
-                secondOp = int.Parse(cmd[1]);
-            }
-            //float value = Convert.ToInt32(cmd[1]);
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            var secondOp = executor.ParseOperand(cmd[1]);
 
-            firstOp = secondOp;
-            // upadte stats
-            executor.updateStats(cmd[0], firstOp);
+            firstOp.Value = secondOp.Value;
             return true;
         }
 
         public static bool add(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
-            ref float secondOp = ref executor.operandToVar(cmd[1]); 
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            var secondOp = executor.ParseOperand(cmd[1]); 
 
-            firstOp = firstOp + secondOp;
-            // update stats
-            executor.updateStats(cmd[0], firstOp);
-            executor.zf = (firstOp) == 0 ? 1 : 0;
-            executor.sf = (firstOp) < 0 ? 1 : 0;
-            executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
-            // upd flags
-            executor.updateStats("zf", executor.zf);
-            executor.updateStats("sf", executor.sf);
-            executor.updateStats("pf", executor.pf);
+            firstOp.Value = firstOp.Value + secondOp.Value;
+            //upd flags
+            executor.zf.Flag = (firstOp.Value) == 0 ? true : false;
+            executor.sf.Flag = (firstOp.Value) < 0 ? true : false;
+            executor.pf.Flag = (firstOp.Value) % 2 == 0 ? true : false;
 
             return true;
         }
 
         public static bool sub(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
-            ref float secondOp = ref executor.operandToVar(cmd[1]);
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            var secondOp = executor.ParseOperand(cmd[1]);
 
-            firstOp = firstOp - secondOp;
-            // upadte stats
-            executor.updateStats(cmd[0], firstOp);
-            executor.zf = (firstOp) == 0 ? 1 : 0;
-            executor.sf = (firstOp) < 0 ? 1 : 0;
-            executor.pf = (firstOp) % 2 == 0 ? 1 : 0;
-            // upd flags
-            executor.updateStats("zf", executor.zf);
-            executor.updateStats("sf", executor.sf);
-            executor.updateStats("pf", executor.pf);
+            firstOp.Value = firstOp.Value - secondOp.Value;
+            //upd flags
+            executor.zf.Flag = (firstOp.Value) == 0 ? true : false;
+            executor.sf.Flag = (firstOp.Value) < 0 ? true : false;
+            executor.pf.Flag = (firstOp.Value) % 2 == 0 ? true : false;
 
             return true;
         }
 
         public static bool mul(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
-            ref float secondOp = ref executor.operandToVar(cmd[1]);
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            var secondOp = executor.ParseOperand(cmd[1]);
 
-            firstOp = firstOp * secondOp;
-            // upadte stats
-            executor.updateStats(cmd[0], firstOp);
+            firstOp.Value = firstOp.Value * secondOp.Value;
+
             return true;
         }
 
         public static bool div(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
 
-            executor.edx = (int)executor.eax % (int)firstOp;
-            executor.eax = (int) executor.eax / (int) firstOp;
-            // upadte stats
-            executor.updateStats("edx", executor.edx);
-            executor.updateStats("eax", executor.eax);
+            executor.edx.Value = executor.eax.Value % firstOp.Value;
+            executor.eax.Value = executor.eax.Value / firstOp.Value;
+
             return true;
         }
         
         public static bool cmp(List<string> cmd, Executor executor)
         {
-            ref float firstOp = ref executor.operandToVar(cmd[0]);
-            ref float secondOp = ref executor.operandToVar(cmd[1]);
+            var firstOp = executor.ParseOperand(cmd[0]);
+            if (firstOp is Imm)
+                throw new FormatException(FIRST_OP_IMM);
+            var secondOp = executor.ParseOperand(cmd[1]);
 
-            executor.zf = (firstOp - secondOp) == 0 ? 1 : 0;
-            executor.sf = (firstOp - secondOp) < 0 ? 1 : 0;
-            executor.pf = (firstOp - secondOp) % 2 == 0 ? 1 : 0;
-
-            // upd flags
-            executor.updateStats("zf", executor.zf);
-            executor.updateStats("sf", executor.sf);
-            executor.updateStats("pf", executor.pf);
+            //upd flags
+            executor.zf.Flag = firstOp.Value == secondOp.Value;
+            executor.sf.Flag = firstOp.Value < secondOp.Value;
+            executor.pf.Flag = (firstOp.Value - secondOp.Value) % 2 == 0;
 
             return true;
-        }
-
-        public static bool ret(Executor executor)
-        {
-            return executor.zf == 1 ? true : false;
         }
 
         //jump stuff
         public static bool je(Executor executor)
         {
-            return executor.zf == 1 ? true : false;
+            return executor.zf.Flag;
         }
 
         public static bool jne(Executor executor)
         {
-            return executor.zf == 0 ? true : false;
+            return !executor.zf.Flag;
         }
 
         public static bool jle(Executor executor)
         {
-            if (executor.zf == 1 || executor.sf == 1)
-                return true;
-            return false;
+            return executor.zf.Flag || executor.sf.Flag;
         }
 
         public static bool jg(Executor executor)
@@ -165,7 +143,7 @@ namespace BranchPredictionSim
 
         public static bool jp(Executor executor)
         {
-            return executor.pf == 1 ? true : false;
+            return executor.pf.Flag;
         }
 
         public static bool jnp(Executor executor)
@@ -175,7 +153,7 @@ namespace BranchPredictionSim
 
         public static bool js(Executor executor)
         {
-            return executor.sf == 1 ? true : false;
+            return executor.sf.Flag;
         }
 
         public static bool jns(Executor executor)

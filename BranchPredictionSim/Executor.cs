@@ -1,4 +1,5 @@
-﻿using BranchPredictionSim.Exceptions;
+﻿using BranchPredictionSim.CmdParams;
+using BranchPredictionSim.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,37 +22,42 @@ namespace BranchPredictionSim
         private const string CALL_CMD = "call";
 
         private List<List<string>> asmCodeLines;
-        //linenum: [(realExec, predictExec), ...]
         public Dictionary<int, List<KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new Dictionary<int, List<KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
-        // Impossible to update info // public ObservableCollection<KeyValuePair<string, float>> Data { get; set; } = new ObservableCollection<KeyValuePair<string, float>>();
-        public List<Data> stats { get; private set; } = new List<Data>();
+        public Dictionary<string, Register> regDict;
+        public Dictionary<string, FlagReg> flagDict;
         public Stack<int> EIP = new Stack<int>();
         private IBranchPredictor predictor;
         public int currentLineNum = 0;
         public int CurrentAddr { get; private set; } = 0;
         public int CommandLength { get; private set; } = 0;
 
-        public float eax = 0f;
-        public float ebx = 0f;
-        public float ecx = 0f;
-        public float edx = 0f;
-        public float zf = 0f;
-        public float sf = 0f;
-        public float pf = 0f;
+        public Register eax = new Register(0);
+        public Register ebx = new Register(0);
+        public Register ecx = new Register(0);
+        public Register edx = new Register(0);
+        public FlagReg zf = new FlagReg(false);
+        public FlagReg sf = new FlagReg(false);
+        public FlagReg pf = new FlagReg(false);
 
         public Executor(string[] asmCodeStr, IBranchPredictor predictor)
         {
             asmCodeLines = ParseAsmCode(asmCodeStr);
             this.predictor = predictor;
             InitLabels();
-            stats.Add(new Data("eax", eax));
-            stats.Add(new Data("ebx", ebx));
-            stats.Add(new Data("ecx", ecx));
-            stats.Add(new Data("edx", edx));
-            stats.Add(new Data("zf", zf));
-            stats.Add(new Data("sf", sf));
-            stats.Add(new Data("pf", pf));
+            regDict = new Dictionary<string, Register>()
+            {
+                {"EAX", eax },
+                {"EBX", ebx },
+                {"ECX", ecx },
+                {"EDX", edx }
+            };
+            flagDict = new Dictionary<string, FlagReg>()
+            {
+                {"ZF", zf },
+                {"SF", sf },
+                {"PF", pf },
+            };
         }
 
         private void InitLabels()
@@ -66,23 +72,21 @@ namespace BranchPredictionSim
             }
         }
 
-        public ref float operandToVar(string operand)
+        public CmdParam<int> ParseOperand(string operand)
         {
-            if (operand.Equals("EAX", StringComparison.CurrentCultureIgnoreCase))
-                return ref eax;
-            if (operand.Equals("EBX", StringComparison.CurrentCultureIgnoreCase))
-                return ref ebx;
-            if (operand.Equals("ECX", StringComparison.CurrentCultureIgnoreCase))
-                return ref ecx;
-            if (operand.Equals("EDX", StringComparison.CurrentCultureIgnoreCase))
-                return ref edx;
-            if (operand.Equals("SF", StringComparison.CurrentCultureIgnoreCase))
-                return ref sf;
-            if (operand.Equals("PF", StringComparison.CurrentCultureIgnoreCase))
-                return ref pf;
-            if (operand.Equals("ZF", StringComparison.CurrentCultureIgnoreCase))
-                return ref zf;
-            throw new FormatException("Нет такого регистра " + operand);
+            switch (operand.ToUpper())
+            {
+                case "EAX":
+                    return eax;
+                case "EBX":
+                    return ebx;
+                case "ECX":
+                    return ecx;
+                case "EDX":
+                    return edx;
+                default:
+                    return new Imm(int.Parse(operand));
+            }
         }
 
         private static List<List<string>> ParseAsmCode(string[] asmCodeLines)
@@ -103,9 +107,10 @@ namespace BranchPredictionSim
             return splitCode;
         }
 
-        public void RunProgram()
-        {     
-            while (currentLineNum < asmCodeLines.Count)
+        public void RunProgram(int maxIter = 500)
+        {
+            int currIter = 0;
+            while (currentLineNum < asmCodeLines.Count && currIter++ < maxIter)
             {
                 Step();
             }
@@ -172,17 +177,5 @@ namespace BranchPredictionSim
             currentLineNum++;
         }
 
-        public void updateStats(string reg, float value)
-        {
-            foreach (var check in stats)
-            {
-                if (reg == check.regFlag)
-                    check.value = value;
-            }
-        }
     }
 }
-
-//            Console.WriteLine(String.Join(" ", codeLine) +
-//$"\neax {eax}, ebx {ebx}, ecx {ecx}, edx {edx}" +
-//$"\ncf {cf}, zf {zf}");

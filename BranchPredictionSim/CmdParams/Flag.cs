@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace BranchPredictionSim.CmdParams
 {
-    class Register : CmdParam<int>
+    class FlagReg 
     {
-        public override int Value { get; set; }
-        public Register(int data)
+        public bool Flag { get; set; }
+        public FlagReg(bool flag)
         {
-            Value = data;
+            Flag = flag;
         }
     }
 }

@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace BranchPredictionSim
 {
-    class CmdParam
+    abstract class CmdParam<T>
     {
-        public int data;
-        public CmdParam(int data)
-        {
-            this.data = data;
-        }
+        public abstract T Value { get; set; }
     }
 }

@@ -19,8 +19,8 @@
         </ComboBox>
         <TextBox x:Name="Params" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="184" Margin="632,0,0,0" FontSize="24" IsEnabled="False"/>
         <Button x:Name="StartButton" IsEnabled ="false" Content="Старт" HorizontalAlignment="Left" Margin="816,0,0,0" VerticalAlignment="Top" Width="277" Height="61" FontSize="24" Click="StartButton_Click"/>
-        <TextBox x:Name="LineNumJump" HorizontalAlignment="Left" Height="61" Margin="1093,61,0,0" TextWrapping="Wrap" Text="-1" VerticalAlignment="Top" Width="196" FontSize="24"/>
-        <TextBlock HorizontalAlignment="Left" Margin="816,61,0,0" TextWrapping="Wrap" Text="Перейти к строке (-1 чтобы продолжить нормальное выполнение)" VerticalAlignment="Top" Height="61" Width="277" FontSize="14" FontStyle="Italic" FontWeight="Bold" TextDecorations="Underline"/>
+        <TextBox x:Name="MaxIter" HorizontalAlignment="Left" Height="61" Margin="1093,61,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="196" FontSize="24"/>
+        <TextBlock HorizontalAlignment="Left" Margin="816,61,0,0" TextWrapping="Wrap" Text="Максимальное количество итераций" VerticalAlignment="Top" Height="61" Width="277" FontSize="14" FontStyle="Italic" FontWeight="Bold" TextDecorations="Underline"/>
         <Button x:Name="ChooseFile" Content="Открыть" HorizontalAlignment="Left" Margin="181,0,0,0" VerticalAlignment="Top" Width="168" Height="61" FontSize="24" Click="ChooseFile_Click"/>
         <TextBox x:Name="AsmCode" AcceptsReturn="True" HorizontalAlignment="Left" Height="625" Margin="10,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="339" TextChanged="AsmCode_TextChanged"/>
         <Button x:Name="StopButton" Content="Стоп" HorizontalAlignment="Left" Margin="1093,0,0,0" VerticalAlignment="Top" Width="196" Height="61" FontSize="24" Click="StopButton_Click" IsEnabled="False"/>
@@ -32,26 +32,16 @@
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,206,520" Text="Статистика предсказаний: "/>
-            <Grid HorizontalAlignment="Left" Height="242" Margin="744,322,0,0" VerticalAlignment="Top" Width="206">
-                <TextBlock x:Name="regEax" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"/>
-                <TextBlock x:Name="valueEax" HorizontalAlignment="Left" Margin="103,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93"/>
-                <TextBlock x:Name="regEbx" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,16,0,0"/>
-                <TextBlock x:Name="valueEbx" HorizontalAlignment="Left" Margin="103,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-                <TextBlock x:Name="regEcx" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,32,0,0" />
-                <TextBlock x:Name="valueEcx" HorizontalAlignment="Left" Margin="103,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-                <TextBlock x:Name="regEdx" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,48,0,0" />
-                <TextBlock x:Name="valueEdx" HorizontalAlignment="Left" Margin="103,48,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-                <TextBlock x:Name="ZF" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,64,0,0" />
-                <TextBlock x:Name="valueZF" HorizontalAlignment="Left" Margin="103,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-                <TextBlock x:Name="SF" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,80,0,0" />
-                <TextBlock x:Name="valueSF" HorizontalAlignment="Left" Margin="103,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-                <TextBlock x:Name="PF" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" Margin="0,96,0,0" />
-                <TextBlock x:Name="valuePF" HorizontalAlignment="Left" Margin="103,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.306,1.667" Width="93" />
-            </Grid>
-            <DataGrid Visibility="Hidden" x:Name="RegistersFlags" HorizontalAlignment="Left" Height="232" Margin="744,322,0,0" VerticalAlignment="Top" Width="196" AutoGenerateColumns="False">
+            <DataGrid Visibility="Visible" x:Name="RegistersFlags" HorizontalAlignment="Left" Height="113" Margin="744,322,0,0" VerticalAlignment="Top" Width="196" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Регистр/Флаг" Binding ="{Binding regFlag}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Значение" Binding="{Binding value}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Регистр" Binding ="{Binding Key}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Значение" Binding="{Binding Value.Value}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid Visibility="Visible" x:Name="Flags" HorizontalAlignment="Left" Height="119" Margin="744,435,0,0" VerticalAlignment="Top" Width="196" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Флаг" Binding ="{Binding Key}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Значение" Binding="{Binding Value.Flag}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock x:Name="NextCmdAddr" HorizontalAlignment="Left" Margin="0,49,0,0" TextWrapping="Wrap" Text="Адрес следующей команды:" VerticalAlignment="Top" Height="35" Width="739" FontSize="24"/>

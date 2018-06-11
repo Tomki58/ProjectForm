@@ -55,9 +55,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CmdParams\CmdParam.cs" />
+    <Compile Include="CmdParams\Flag.cs" />
     <Compile Include="CmdParams\Imm.cs" />
     <Compile Include="CmdParams\Register.cs" />
-    <Compile Include="Data.cs" />
     <Compile Include="Exceptions\EndOfCodeException.cs" />
     <Compile Include="Predictors\AlwaysPredictJump.cs" />
     <Compile Include="Predictors\BTFNT.cs" />

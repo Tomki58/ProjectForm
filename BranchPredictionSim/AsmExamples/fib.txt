@@ -1,6 +1,7 @@
 mov eax 1
 mov ebx 0
 fib:
+push eax
 mov ecx eax
 add eax ebx
 mov ebx ecx

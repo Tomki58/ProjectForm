@@ -23,7 +23,7 @@ namespace BranchPredictionSim
         private const string CALL_CMD = "call";
 
         private List<List<string>> asmCodeLines;
-        public Dictionary<int, List<KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new Dictionary<int, List<KeyValuePair<bool, bool>>>();
+        public List<KeyValuePair<int, KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new List<KeyValuePair<int, KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
         public Dictionary<string, Register> regDict;
         public Dictionary<string, FlagReg> flagDict;
@@ -133,34 +133,37 @@ namespace BranchPredictionSim
                 if (!ASMFunctions.cmdDict[oper](tempList, this))
                     throw new Exception("Команда не сработала");
             }
+            //check for jump
             else if (ASMFunctions.jumpDict.ContainsKey(oper))
             {
                 //real execution
                 bool execJump = ASMFunctions.jumpDict[oper](this);
+
+                //prediction
+                bool jumpPrediction = predictor.shouldJump(cmdAndArgs, lineNum, this);
+
+                //add to stats
+                predictorStats.Add(new KeyValuePair<int, KeyValuePair<bool, bool>>(lineNum, new KeyValuePair<bool, bool>(execJump, jumpPrediction)));
+
                 if (execJump)
                 {
                     lineNum = labelDict[cmdAndArgs[1]]; // set i to line num where label is
                 }
-                Console.Write(" Real jump: " + execJump);
-
-                //prediction
-                bool jumpPrediction = predictor.shouldJump(cmdAndArgs, lineNum, this);
-                Console.Write(" Prediction jump: " + jumpPrediction);
-
-                //add to stats
-                if (!predictorStats.ContainsKey(lineNum))
-                    predictorStats[lineNum] = new List<KeyValuePair<bool, bool>>();
-                predictorStats[lineNum].Add(new KeyValuePair<bool, bool>(execJump, jumpPrediction));
             }
+            //check for label
             else if (labelDict.ContainsKey(oper.Substring(0, oper.Length - 1)))
             {
                 return;
-            } else if (oper.Equals(RETURN_CMD, StringComparison.CurrentCultureIgnoreCase))
+            }
+            //check for 'ret' command
+            else if (oper.Equals(RETURN_CMD, StringComparison.CurrentCultureIgnoreCase))
             {
                 if (EIP.Count == 0)
                     throw new EndOfCodeException("Управление передано ОС");
                 lineNum = EIP.Pop();
-            } else if (oper.Equals(CALL_CMD, StringComparison.CurrentCultureIgnoreCase))
+            }
+            //check for 'call' cmd
+            else if (oper.Equals(CALL_CMD, StringComparison.CurrentCultureIgnoreCase))
             {
                 EIP.Push(lineNum);
                 lineNum = labelDict[cmdAndArgs[1]];
@@ -173,8 +176,17 @@ namespace BranchPredictionSim
         {
             if (currentLineNum >= asmCodeLines.Count)
                 throw new EndOfCodeException("Конец кода, управление передано ОС");
+            int prevAddr = currentLineNum;
             Step(ref currentLineNum);
-            CurrentAddr += CommandLength;
+            //fix this shit vnizu
+            if (prevAddr == currentLineNum - 1)//linear
+            {
+                CurrentAddr += CommandLength;
+
+            } else
+            {
+
+            }
             CommandLength = asmCodeLines[currentLineNum].Aggregate((accum, next) => accum + next).Length;
             currentLineNum++;
         }

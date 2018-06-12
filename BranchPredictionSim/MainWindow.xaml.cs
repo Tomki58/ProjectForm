@@ -28,7 +28,7 @@ namespace BranchPredictionSim
             this.DataContext = this;
             InitializeComponent();
             AsmCodeFile.IsEnabled = false;
-
+            //notifier = new IBranchNotifier
         }
 
         private Executor executor;
@@ -53,7 +53,7 @@ namespace BranchPredictionSim
                 StringSplitOptions.None
             );
 
-            //complete fakeasm
+            //fill fakeasm
             FakeAsm.Inlines.Clear();
             foreach (var codeLine in codeLines)
             {
@@ -133,8 +133,6 @@ namespace BranchPredictionSim
                           MessageBoxButton.OK);
             }
             UpdateResults();
-
-
         }
 
         private void PredictorType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -175,17 +173,18 @@ namespace BranchPredictionSim
             EIPValues.ItemsSource = executor.EIP.ToList();
             EIPValues.Items.Refresh();
 
+            //predictions
+            PredictionHistory.ItemsSource = executor.predictorStats;
+            PredictionHistory.Items.Refresh();
+
+
             //prediction stats
             int successPredictions = 0;
-            int predictionsCount = 0;
-            foreach (var linePredictions in executor.predictorStats)
+            int predictionsCount = executor.predictorStats.Count;
+            foreach (var singlePrediction in executor.predictorStats)
             {
-                foreach (var predictVsReal in linePredictions.Value)
-                {
-                    predictionsCount++;
-                    if (predictVsReal.Key == predictVsReal.Value)
-                        successPredictions++;
-                }
+                if (singlePrediction.Value.Key == singlePrediction.Value.Value)
+                    successPredictions++;
             }
             PredictionStats.Text = "Статистика предсказаний: " 
                 + (successPredictions/(double) predictionsCount) * 100 

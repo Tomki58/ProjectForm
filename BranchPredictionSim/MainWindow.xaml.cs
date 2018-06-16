@@ -77,6 +77,15 @@ namespace BranchPredictionSim
                 case 4:
                     executor = new Executor(codeLines, new NBitPredictor(int.Parse(Params.Text)));
                     break;
+                case 5:
+                    executor = new Executor(codeLines, new BNTFT());
+                    break;
+                case 6:
+                    executor = new Executor(codeLines, new TwoLevelPrediction(2));
+                    break;
+                case 7:
+                    executor = new Executor(codeLines, new Gshare(2));
+                    break;
                 default:
                     throw new Exception("Error!");
                     break;
@@ -102,7 +111,7 @@ namespace BranchPredictionSim
                           MessageBoxButton.OK);
             } catch (FormatException ex)
             {
-                MessageBoxResult result = MessageBox.Show(ex.ToString() + "\nСтрока " + executor.currentLineNum,
+                MessageBoxResult result = MessageBox.Show(ex.Message + "\nСтрока " + executor.currentLineNum,
                           "Ошибка параметра",
                           MessageBoxButton.OK);
             }
@@ -131,6 +140,10 @@ namespace BranchPredictionSim
                 MessageBoxResult result = MessageBox.Show(ex.Message + "\nСтрока " + executor.currentLineNum,
                           "Ошибка параметра",
                           MessageBoxButton.OK);
+            }
+            catch (Exception)
+            {
+
             }
             UpdateResults();
         }

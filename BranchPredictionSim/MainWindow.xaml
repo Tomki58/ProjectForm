@@ -16,6 +16,9 @@
             <ComboBoxItem FontSize="24" Content="1-bit predictor"/>
             <ComboBoxItem FontSize="24" Content="2-bit predictor"/>
             <ComboBoxItem FontSize="24" Content="n-bit predictor"/>
+            <ComboBoxItem FontSize="24" Content="BNTFT"/>
+            <ComboBoxItem FontSize="24" Content="Two level global prediction"/>
+            <ComboBoxItem FontSize="24" Content="Gshare"/>
         </ComboBox>
         <TextBox x:Name="Params" HorizontalAlignment="Left" Height="61" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="184" Margin="632,0,0,0" FontSize="24" IsEnabled="False"/>
         <Button x:Name="StartButton" IsEnabled ="false" Content="Старт" HorizontalAlignment="Left" Margin="816,0,0,0" VerticalAlignment="Top" Width="277" Height="61" FontSize="24" Click="StartButton_Click"/>
@@ -31,7 +34,7 @@
                     <DataGridTextColumn Header="Адрес метки" Binding="{Binding Value}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,291,520" Text="Статистика предсказаний: "/>
+            <TextBlock x:Name="PredictionStats" TextWrapping="Wrap" FontSize="24" Margin="0,0,349,520" Text="Статистика предсказаний: "/>
             <DataGrid Visibility="Visible" x:Name="RegistersFlags" HorizontalAlignment="Left" Height="113" Margin="744,322,0,0" VerticalAlignment="Top" Width="196" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Регистр" Binding ="{Binding Key}"></DataGridTextColumn>
@@ -44,7 +47,7 @@
                     <DataGridTextColumn Header="Значение" Binding="{Binding Value.Flag}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock x:Name="NextCmdAddr" HorizontalAlignment="Left" Margin="0,49,0,0" TextWrapping="Wrap" Text="Адрес следующей команды:" VerticalAlignment="Top" Height="35" Width="664" FontSize="24"/>
+            <TextBlock x:Name="NextCmdAddr" HorizontalAlignment="Left" Margin="0,49,0,0" TextWrapping="Wrap" Text="Адрес следующей команды:" VerticalAlignment="Top" Height="35" Width="601" FontSize="24"/>
             <DataGrid x:Name="StackValues" HorizontalAlignment="Left" Height="282" Margin="606,0,0,0" VerticalAlignment="Top" Width="138">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Стек" Binding="{Binding}"></DataGridTextColumn>

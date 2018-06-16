@@ -9,27 +9,28 @@ namespace BranchPredictionSim.Predictors
 {
     class NBitPredictor : IBranchPredictor
     {
-        private int predictMem;
         private int maxHigh;
+        private Dictionary<int, int> predictCounter = new Dictionary<int, int>();//linenum:nbitcounter
 
         public NBitPredictor(int n)
         {
-            predictMem = 2 ^ (n - 1);
             maxHigh = 2 ^ n;
         }
 
         public void notfyJump(int lineNum, bool jmpTaken)
         {
-            predictMem = predictMem + (jmpTaken ? 1 : -1);
-            if (predictMem < 0)
-                predictMem = 0;
-            if (predictMem >= maxHigh)
-                predictMem = maxHigh - 1;
+            predictCounter[lineNum] = predictCounter[lineNum] + (jmpTaken ? 1 : -1);
+            if (predictCounter[lineNum] < 0)
+                predictCounter[lineNum] = 0;
+            if (predictCounter[lineNum] >= maxHigh)
+                predictCounter[lineNum] = maxHigh - 1;
         }
 
         public bool shouldJump(List<string> codeLine, int lineNumber, Executor executor)
         {
-            return predictMem >= (maxHigh / 2);
+            if (!predictCounter.ContainsKey(lineNumber))
+                predictCounter[lineNumber] = maxHigh / 2;
+            return predictCounter[lineNumber] >= (maxHigh / 2);
         }
     }
 }

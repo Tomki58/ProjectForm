@@ -60,7 +60,9 @@
     <Compile Include="CmdParams\Register.cs" />
     <Compile Include="Exceptions\EndOfCodeException.cs" />
     <Compile Include="Predictors\AlwaysPredictJump.cs" />
+    <Compile Include="Predictors\BNTFT.cs" />
     <Compile Include="Predictors\BTFNT.cs" />
+    <Compile Include="Predictors\Gshare.cs" />
     <Compile Include="Predictors\IBranchPredictor.cs" />
     <Compile Include="Predictors\NBitPredictor.cs" />
     <Page Include="MainWindow.xaml">
@@ -79,6 +81,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Predictors\TwoLevelPrediction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

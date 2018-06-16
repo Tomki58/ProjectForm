@@ -1,0 +1,11 @@
+mov ebx 39
+mov eax 143
+step:
+cmp ebx 0
+je end
+div ebx
+mov eax ebx
+mov ebx edx
+jmp step
+end:
+push eax

@@ -25,9 +25,12 @@ namespace BranchPredictionSim
         private List<List<string>> asmCodeLines;
         public List<KeyValuePair<int, KeyValuePair<bool, bool>>> predictorStats { get; private set; } = new List<KeyValuePair<int, KeyValuePair<bool, bool>>>();
         public Dictionary<string, int> labelDict { get; private set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> FakeLabelDict { get; private set; } = new Dictionary<string, int>();
+        public Stack<int> FakeEIP = new Stack<int>();
         public Dictionary<string, Register> regDict;
         public Dictionary<string, FlagReg> flagDict;
         public Stack<int> EIP = new Stack<int>();
+        public List<int> Adresses = new List<int>();
         private IBranchPredictor predictor;
         public int currentLineNum = 0;
         public int CurrentAddr { get; private set; } = 0;
@@ -44,6 +47,19 @@ namespace BranchPredictionSim
 
         public Executor(string[] asmCodeStr, IBranchPredictor predictor)
         {
+            int count = 0;
+            asmCodeLines = ParseAsmCode(asmCodeStr);
+            Adresses.Add(0);
+            count = 1;
+            foreach (var listStr in asmCodeLines)
+            {
+                foreach (string str in listStr)
+                {
+                    count += str.Length;
+                }
+                Adresses.Add(count);
+            }
+            Adresses.Remove(Adresses.Last());
             asmCodeLines = ParseAsmCode(asmCodeStr);
             this.predictor = predictor;
             InitLabels();
@@ -70,6 +86,7 @@ namespace BranchPredictionSim
                 if (cmd[0].EndsWith(LABEL_SYMB))
                 {
                     labelDict[cmd[0].Remove(cmd[0].Length - 1)] = i; //remove ':' and point to next line
+                    FakeLabelDict[cmd[0].Remove(cmd[0].Length - 1)] = Adresses[i];
                 }
             }
         }
@@ -161,11 +178,13 @@ namespace BranchPredictionSim
                 if (EIP.Count == 0)
                     throw new EndOfCodeException("Управление передано ОС");
                 lineNum = EIP.Pop();
+                FakeEIP.Pop();
             }
             //check for 'call' cmd
             else if (oper.Equals(CALL_CMD, StringComparison.CurrentCultureIgnoreCase))
             {
                 EIP.Push(lineNum);
+                FakeEIP.Push(Adresses[lineNum + 1]);
                 lineNum = labelDict[cmdAndArgs[1]];
             }
             else

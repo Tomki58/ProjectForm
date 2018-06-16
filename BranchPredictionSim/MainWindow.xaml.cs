@@ -93,7 +93,7 @@ namespace BranchPredictionSim
 
             //foreach(var label in executor.labelDict)
             //{
-            LabelTable.ItemsSource = executor.labelDict;
+            LabelTable.ItemsSource = executor.FakeLabelDict;
             //Update_Stats(executor);
             UpdateResults();
             //}
@@ -183,7 +183,7 @@ namespace BranchPredictionSim
             StackValues.Items.Refresh();
 
             //eip
-            EIPValues.ItemsSource = executor.EIP.ToList();
+            EIPValues.ItemsSource = executor.FakeEIP.ToList();
             EIPValues.Items.Refresh();
 
             //predictions
@@ -204,7 +204,7 @@ namespace BranchPredictionSim
                 + "% успешных предсказаний";
 
             //nextCommandAddr
-            NextCmdAddr.Text = string.Format("Адрес следующей команды: {0:X} = {1:X} + {2:X}", executor.CommandLength + executor.CurrentAddr, executor.CurrentAddr, executor.CommandLength);
+            NextCmdAddr.Text = string.Format("Адрес следующей команды: {0:X}", executor.Adresses[executor.currentLineNum]);
         }
 
         // Open file
